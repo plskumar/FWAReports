@@ -1,0 +1,747 @@
+{
+  "run_id": "demo-s1-smoke-3000",
+  "status": "completed",
+  "schema_version": "basys-infer-findings-1.0",
+  "scenarios_run": [
+    "em_upcoding"
+  ],
+  "record_counts": {
+    "claim_lines_received": 3000,
+    "claim_lines_evaluated": 3000,
+    "claim_lines_unresolved": 0
+  },
+  "findings": [
+    {
+      "finding_id": "F-EM-000001",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000004",
+      "provider_npi": "2284699816",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.64,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 83,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 30,
+        "band": "low"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.64 versus cohort 95th percentile 0.7.",
+        "Provider at the 83th percentile of 30 cohort providers.",
+        "3 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.3 times the provider total level 4 or 5 paid 9605.57.",
+        "Tested 3 legitimate alternatives; 3 survived scrutiny: sicker_panel, referral_case_mix, specialty_subfocus."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000000678",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "178.49",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "159.05"
+        },
+        {
+          "CLAIM_NBR": "C0000000680",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "156.15",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "123.21"
+        },
+        {
+          "CLAIM_NBR": "C0000000681",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "148.00",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "125.28"
+        },
+        {
+          "CLAIM_NBR": "C0000000686",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "162.41",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "134.69"
+        },
+        {
+          "CLAIM_NBR": "C0000000687",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "154.32",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "118.06"
+        },
+        {
+          "CLAIM_NBR": "C0000000688",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "168.81",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "125.90"
+        },
+        {
+          "CLAIM_NBR": "C0000000691",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "226.26",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "181.51"
+        },
+        {
+          "CLAIM_NBR": "C0000000695",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "143.47",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "113.23"
+        },
+        {
+          "CLAIM_NBR": "C0000000697",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "219.86",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "157.20"
+        },
+        {
+          "CLAIM_NBR": "C0000000699",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "163.62",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "124.32"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "2881.67",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000004 in specialty 11 billed a level 4 or 5 E&M code on 64 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 83th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based entirely on coded claim data. Clinical notes, documentation of medical decision-making, time, and history and exam elements were not available. Conclusions are about plausibility of the coded diagnoses, not about whether documentation actually supports the billed level.\n\nProvider P1000004 has a level 4 and 5 rate of 0.64, which sits at the 83rd percentile among 30 peers in specialty code 11 and is above the cohort fence of 0.57. That is elevated but not extreme; the 95th percentile peer reaches 0.70.\n\nOf the 10 sampled lines, 7 were assessed as consistent with the billed level based on the diagnosis codes alone. The three inconsistent lines (C0000000687, C0000000688, and C0000000691) each had only two coded diagnoses, which is a thin basis for a high-level code, particularly for new patient visits where the complexity bar is higher.\n\nAll three alternative explanations survived review. The coded diagnoses across the sample frequently include advanced chronic conditions such as stage 4 CKD, heart failure, COPD exacerbation, and ischemic heart disease, which is consistent with a sicker-than-average panel, a referral-heavy practice, or a provider with a sub-focus on complex chronic disease management. Any of these factors could legitimately explain the elevated rate without upcoding.\n\nOverall, the coded data does not strongly support a fraud or upcoding finding at this time. The three lines with sparse diagnoses warrant attention, but the majority of the sample shows multi-system complexity that is plausibly consistent with the billed codes. A documentation review of the three inconsistent lines and a broader look at whether new patient codes are disproportionately high would be reasonable next steps before escalating this case.",
+        "judge": "All three alternative explanations survived review, and 7 of 10 sampled lines show diagnosis patterns that are plausibly consistent with the billed level, including advanced multi-system conditions that could reflect a genuinely complex panel. With no clinical notes available, these are plausibility judgments based on coded data only, but the convergence of a sicker panel, referral case mix, and specialty sub-focus all pointing in the same direction meaningfully weakens the upcoding case at this stage."
+      }
+    },
+    {
+      "finding_id": "F-EM-000002",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000016",
+      "provider_npi": "1428185805",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.7,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 90,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 30,
+        "band": "low"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.7 versus cohort 95th percentile 0.7.",
+        "Provider at the 90th percentile of 30 cohort providers.",
+        "2 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.2 times the provider total level 4 or 5 paid 10386.41.",
+        "Tested 3 legitimate alternatives; 3 survived scrutiny: sicker_panel, referral_case_mix, specialty_subfocus."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000002540",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "165.43",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "133.42"
+        },
+        {
+          "CLAIM_NBR": "C0000002542",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "234.52",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "197.78"
+        },
+        {
+          "CLAIM_NBR": "C0000002543",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "205.95",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "169.26"
+        },
+        {
+          "CLAIM_NBR": "C0000002544",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "171.29",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "150.64"
+        },
+        {
+          "CLAIM_NBR": "C0000002545",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "213.45",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "173.80"
+        },
+        {
+          "CLAIM_NBR": "C0000002549",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "215.82",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "188.99"
+        },
+        {
+          "CLAIM_NBR": "C0000002550",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "155.89",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "116.64"
+        },
+        {
+          "CLAIM_NBR": "C0000002552",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "231.75",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "186.14"
+        },
+        {
+          "CLAIM_NBR": "C0000002554",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "229.83",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "179.84"
+        },
+        {
+          "CLAIM_NBR": "C0000002555",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "164.35",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "141.84"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "2077.28",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000016 in specialty 11 billed a level 4 or 5 E&M code on 70 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 90th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based on coded claim data only. No clinical notes, documentation, or medical records were available. Conclusions are about plausibility of the coded diagnoses relative to the billed codes, not about whether the documentation actually supports those codes.\n\nProvider P1000016 bills level 4 or 5 E&M codes at a 70 percent rate, which sits at the 90th percentile of its internal medicine peer group and well above the cohort fence of 57 percent. That is a meaningful statistical flag.\n\nHowever, eight of the ten sampled lines were assessed as consistent. The two inconsistent lines (C0000002549 and C0000002552) each carried only two diagnoses for a level 5 code, which is a thin profile. The remaining eight lines showed three or more serious, multi-system chronic conditions -- combinations of stage 4 CKD, heart failure, coronary artery disease, diabetes with hyperglycemia, COPD exacerbation, hypertension, and depression -- that plausibly justify high-level coding.\n\nAll three alternative explanations survived. The diagnosis mix across the sample is consistent with a sicker-than-average panel, a referral-heavy practice, or a sub-specialization in complex cardiorenal or chronic disease management. Any of these would legitimately push the level 4 and 5 rate above peer norms.\n\nOverall, the coded data does not strongly support a upcoding finding on its own. The two thin-diagnosis level 5 lines are worth noting, but the broader pattern looks more like a high-acuity practice than systematic upcoding. A documentation audit of the two inconsistent lines and a broader sample would be the appropriate next step before any adverse action.",
+        "judge": "All three alternative explanations survived and eight of ten sampled lines show multi-system chronic conditions that plausibly support high-level coding, leaving only two thin-diagnosis lines as genuine concerns. With no clinical notes available, these are plausibility judgments based on coded data only, and the overall pattern looks more like a high-acuity practice than systematic upcoding."
+      }
+    },
+    {
+      "finding_id": "F-EM-000003",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000040",
+      "provider_npi": "9679594470",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.61,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 80,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 43,
+        "band": "low"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.61 versus cohort 95th percentile 0.7.",
+        "Provider at the 80th percentile of 30 cohort providers.",
+        "6 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.6 times the provider total level 4 or 5 paid 8936.31.",
+        "Tested 3 legitimate alternatives; 2 survived scrutiny: sicker_panel, specialty_subfocus."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000006257",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "180.03",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "135.38"
+        },
+        {
+          "CLAIM_NBR": "C0000006258",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "153.79",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "130.83"
+        },
+        {
+          "CLAIM_NBR": "C0000006259",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "186.56",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "141.62"
+        },
+        {
+          "CLAIM_NBR": "C0000006260",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "153.80",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "134.79"
+        },
+        {
+          "CLAIM_NBR": "C0000006262",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "154.31",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "126.38"
+        },
+        {
+          "CLAIM_NBR": "C0000006263",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "161.27",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "138.56"
+        },
+        {
+          "CLAIM_NBR": "C0000006264",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "208.65",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "169.05"
+        },
+        {
+          "CLAIM_NBR": "C0000006266",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "145.47",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "130.37"
+        },
+        {
+          "CLAIM_NBR": "C0000006267",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "217.69",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "167.16"
+        },
+        {
+          "CLAIM_NBR": "C0000006270",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "158.97",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "129.38"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "5361.79",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000040 in specialty 11 billed a level 4 or 5 E&M code on 61 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 80th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based on coded claim data only. Clinical notes were not available, so this is a plausibility judgment on diagnosis codes and billed levels, not a documentation audit. Provider P1000040 has a level 4 and 5 rate of 0.61, which sits at roughly the 80th percentile of its specialty 11 peers and above the cohort fence of 0.57. That is elevated but not extreme. Of the ten sampled lines, four are assessed as consistent with the billed level based on the number and severity of diagnoses coded. Six are assessed as inconsistent, primarily because they carry only two diagnoses, at least one of which is relatively routine, which is a thin basis for a level 4 or 5 code. Two alternative explanations survived scrutiny. The provider may genuinely see a sicker-than-average panel, given the presence of CKD stage 4, heart failure, and COPD with exacerbation across multiple claims. A chronic disease sub-focus within internal medicine also plausibly explains some of the elevated rate, as the diagnoses cluster around cardiometabolic and pulmonary conditions. A referral-based case mix explanation did not survive, because the sample includes two-diagnosis visits billed at high levels that do not fit a pattern of receiving only the most complex referred cases. On balance, the coded data raises a moderate concern: the rate is above the cohort fence, and more than half the sampled lines show a weak match between diagnoses and billed level. This warrants a documentation review to confirm that medical decision-making or time was actually documented at the level billed, but the data alone does not establish upcoding.",
+        "judge": "Two of three alternative explanations survived scrutiny, including a plausible sicker panel and a chronic disease sub-focus that could legitimately drive higher billing levels. The rate is above the cohort fence but only at the 80th percentile, not an extreme outlier, and four of ten sampled lines were consistent with the billed level. With no clinical notes available, these are plausibility judgments on coded data only, and the surviving alternatives are enough to temper the concern meaningfully without clearing it entirely."
+      }
+    },
+    {
+      "finding_id": "F-EM-000004",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000044",
+      "provider_npi": "4958124220",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.68,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 87,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 26,
+        "band": "low"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.68 versus cohort 95th percentile 0.7.",
+        "Provider at the 87th percentile of 30 cohort providers.",
+        "1 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.1 times the provider total level 4 or 5 paid 10435.29.",
+        "Tested 3 legitimate alternatives; 3 survived scrutiny: sicker_panel, referral_case_mix, specialty_subfocus."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000006861",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "162.36",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "141.16"
+        },
+        {
+          "CLAIM_NBR": "C0000006862",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "160.41",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "122.51"
+        },
+        {
+          "CLAIM_NBR": "C0000006864",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "211.01",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "160.79"
+        },
+        {
+          "CLAIM_NBR": "C0000006866",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "219.80",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "181.82"
+        },
+        {
+          "CLAIM_NBR": "C0000006867",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "143.39",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "108.88"
+        },
+        {
+          "CLAIM_NBR": "C0000006868",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "230.19",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "197.90"
+        },
+        {
+          "CLAIM_NBR": "C0000006870",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "230.96",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "201.90"
+        },
+        {
+          "CLAIM_NBR": "C0000006872",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "183.27",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "139.47"
+        },
+        {
+          "CLAIM_NBR": "C0000006875",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "149.18",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "120.28"
+        },
+        {
+          "CLAIM_NBR": "C0000006876",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "182.88",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "136.87"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "1043.53",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000044 in specialty 11 billed a level 4 or 5 E&M code on 68 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 87th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based on coded claim data only. No clinical notes, documentation, or medical records were available. Findings are a plausibility judgment, not a documentation audit.\n\nProvider P1000044 has a level 4 and 5 rate of 0.68, which sits at the 87th percentile of its specialty 11 peer group and above the cohort fence of 0.57. That is elevated but not extreme -- the peer 95th percentile is 0.70, so the provider is not an outlier at the very top of the distribution.\n\nOf the 10 sampled lines, 9 were assessed as consistent with the billed level 4 or 5 code. The one inconsistent line (C0000006870, 99215) had only two diagnoses -- hyperlipidemia and depression -- which is a thin basis for the highest established-visit code. That single line is a concern but does not by itself indicate a systemic pattern.\n\nAll three alternative explanations survived review. The diagnosis codes across the sample show a high frequency of serious, interacting chronic conditions (stage 4 CKD, heart failure, ischemic heart disease, COPD exacerbations, diabetes with hyperglycemia), which supports a genuinely sicker panel. The multi-system complexity also fits a referral or complex-care practice model. A sub-specialty focus on high-acuity chronic disease management would similarly explain the elevated rate.\n\nOverall, the coded data does not strongly support a upcoding finding at this time. The one inconsistent line warrants note, but the broader pattern of diagnoses offers plausible clinical justification for the high level 4 and 5 rate. A documentation review of the inconsistent line and a larger random sample would be needed before drawing a firmer conclusion.",
+        "judge": "All three alternative explanations survived review and 9 of 10 sampled lines look consistent with the billed level, which together undercut the upcoding case. The provider sits at the 87th percentile but just below the peer 95th, and the diagnosis mix across the sample points to a genuinely complex patient panel. Note that these line judgments are a plausibility view of coded data only, with no clinical notes reviewed."
+      }
+    },
+    {
+      "finding_id": "F-EM-000005",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000104",
+      "provider_npi": "7171179605",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.7,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 90,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 41,
+        "band": "low"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.7 versus cohort 95th percentile 0.7.",
+        "Provider at the 90th percentile of 30 cohort providers.",
+        "4 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.4 times the provider total level 4 or 5 paid 10687.89.",
+        "Tested 3 legitimate alternatives; 2 survived scrutiny: sicker_panel, specialty_subfocus."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000016169",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "143.77",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "112.15"
+        },
+        {
+          "CLAIM_NBR": "C0000016171",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "181.00",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "151.42"
+        },
+        {
+          "CLAIM_NBR": "C0000016173",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99205",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "228.62",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "192.49"
+        },
+        {
+          "CLAIM_NBR": "C0000016175",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "212.10",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "186.11"
+        },
+        {
+          "CLAIM_NBR": "C0000016177",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "209.41",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "167.70"
+        },
+        {
+          "CLAIM_NBR": "C0000016179",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "212.53",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "176.64"
+        },
+        {
+          "CLAIM_NBR": "C0000016180",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "210.18",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "173.72"
+        },
+        {
+          "CLAIM_NBR": "C0000016184",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "226.50",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "170.72"
+        },
+        {
+          "CLAIM_NBR": "C0000016185",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "145.17",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "128.86"
+        },
+        {
+          "CLAIM_NBR": "C0000016186",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "203.05",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "144.30"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "4275.16",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000104 in specialty 11 billed a level 4 or 5 E&M code on 70 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 90th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based on coded claim data only. Clinical notes were not available, so it is not possible to confirm whether documentation actually supports the billed complexity levels. Judgments here are plausibility assessments, not documentation audits. Provider P1000104 bills level 4 or 5 E and M codes at a 70 percent rate, which sits at the 90th percentile among 30 internal medicine peers and well above the cohort fence of 57 percent. Of the 10 sampled lines, 6 were assessed as consistent and 4 as inconsistent with the billed code. The inconsistent claims are notable: one 99205 was billed with a single unspecified cough code, two 99215 claims had only two diagnoses each, and one 99215 had a borderline three-diagnosis set. Two alternative explanations survived scrutiny. The provider appears to carry a genuinely sick panel with multi-system chronic disease, and the diagnosis mix is consistent with a cardiometabolic or complex chronic disease subfocus within internal medicine, either of which could legitimately push coding toward higher levels. The referral-practice explanation did not survive because the coded data shows no referral indicators and includes at least one claim that looks like a routine acute visit billed at the highest new-patient level. Overall, the high rate is partially explained by patient complexity, but the inconsistent claims, particularly the single-diagnosis 99205, are a meaningful concern that warrants documentation review before a final fraud or abuse determination.",
+        "judge": "Two alternative explanations survived scrutiny - a genuinely sick patient panel and a cardiometabolic subfocus - either of which could legitimately push coding toward higher levels. That said, 4 of 10 sampled lines look inconsistent with the billed code, including a single-diagnosis 99205, which keeps meaningful concern on the table. The net adjustment is moderately negative to reflect the surviving alternatives, while acknowledging that, with no clinical notes, these line judgments are a plausibility view of coded data only and not a documentation audit."
+      }
+    },
+    {
+      "finding_id": "F-EM-000006",
+      "scenario": "em_upcoding",
+      "finding_type": "provider_pattern",
+      "servicing_provider_id": "P1000116",
+      "provider_npi": "1910413398",
+      "peer_cohort": {
+        "specialty_code": "11",
+        "provider_count": 30
+      },
+      "metrics": {
+        "level_4_5_rate": 0.7,
+        "cohort_p50": 0.34,
+        "cohort_p75": 0.47,
+        "cohort_p95": 0.7,
+        "cohort_percentile": 90,
+        "em_line_volume": 100
+      },
+      "score": {
+        "value": 72,
+        "band": "medium"
+      },
+      "needs_review": false,
+      "contributing_factors": [
+        "Level 4 or 5 rate 0.7 versus cohort 95th percentile 0.7.",
+        "Provider at the 90th percentile of 30 cohort providers.",
+        "8 of 10 sampled level 4 or 5 lines judged inconsistent with the billed level.",
+        "flagged_paid_amt is a sample-based estimate: the inconsistent fraction 0.8 times the provider total level 4 or 5 paid 10623.57.",
+        "Tested 3 legitimate alternatives; none survived scrutiny."
+      ],
+      "sampled_claim_lines": [
+        {
+          "CLAIM_NBR": "C0000017865",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99204",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "162.11",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "138.35"
+        },
+        {
+          "CLAIM_NBR": "C0000017868",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "147.25",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "105.08"
+        },
+        {
+          "CLAIM_NBR": "C0000017869",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "150.93",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "123.04"
+        },
+        {
+          "CLAIM_NBR": "C0000017873",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "143.38",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "114.72"
+        },
+        {
+          "CLAIM_NBR": "C0000017874",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "212.72",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "176.16"
+        },
+        {
+          "CLAIM_NBR": "C0000017876",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "151.62",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "108.64"
+        },
+        {
+          "CLAIM_NBR": "C0000017877",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99214",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "145.51",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "120.38"
+        },
+        {
+          "CLAIM_NBR": "C0000017879",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "consistent",
+          "ALLOWED_CHARGE_AMT": "203.97",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "162.31"
+        },
+        {
+          "CLAIM_NBR": "C0000017881",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "203.25",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "147.19"
+        },
+        {
+          "CLAIM_NBR": "C0000017882",
+          "CLAIM_LINE_NBR": "1",
+          "PRIMARY_SERVICE_CODE": "99215",
+          "diagnosis_support": "inconsistent",
+          "ALLOWED_CHARGE_AMT": "215.58",
+          "DER_ACTUAL_PAYMENT_COMP_AMT": "189.04"
+        }
+      ],
+      "exposure": {
+        "flagged_paid_amt": "8498.86",
+        "currency": "USD"
+      },
+      "reasoning_chain": {
+        "finder": "Provider P1000116 in specialty 11 billed a level 4 or 5 E&M code on 70 percent of 100 office E&M lines. That rate is above the cohort outlier fence of 57 percent (cohort median 34 percent plus 1.8 times the cohort robust scale), and the provider is at the 90th percentile of 30 providers in the cohort. The rate and volume meet the candidate thresholds; diagnosis support is assessed by the Critique.",
+        "critique": "Important limitation: this review is based on coded claim data only. No clinical notes, problem lists, or visit documentation were available. Findings are a plausibility judgment, not a documentation audit. Provider P1000116 has a level 4 and 5 rate of 70 percent, which sits at the 90th percentile of its internal medicine peer group and well above the cohort fence of 56.7 percent. Of the 10 sampled lines, 3 were assessed as consistent with the billed level (the two 99215 visits with multiple serious chronic conditions, and one 99215 with heart failure and diabetes). The remaining 7 were assessed as inconsistent, including multiple 99214 and 99215 claims supported only by allergic rhinitis, acute upper respiratory infection, low back pain, or a single headache code. None of the three alternative explanations survived scrutiny: the coded diagnoses do not show a consistently sicker panel, the case mix does not look like a referral or tertiary practice, and no coherent sub-specialization explains billing level 5 visits for minor acute complaints. The pattern of high-level codes paired with low-complexity single diagnoses is a meaningful signal of potential upcoding and warrants a clinical documentation review.",
+        "judge": "All three alternative explanations were tested and none survived, and 8 of 10 sampled lines show high-level codes paired with minor or single acute diagnoses such as allergic rhinitis and upper respiratory infection. That convergence of evidence strengthens the upcoding signal, though it must be noted that these line judgments are a plausibility view of coded claim data only, with no clinical notes reviewed."
+      }
+    }
+  ]
+}
