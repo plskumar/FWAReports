@@ -1,81 +1,50 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AlertTriangle, BadgeDollarSign, BarChart3, CheckCircle2, Download, FileJson, FileText, Printer, Search, ShieldAlert, Upload, Users } from 'lucide-react';
+import { AlertTriangle, BadgeDollarSign, BarChart3, CheckCircle2, Download, FileJson, FileText, Printer, RotateCcw, Search, ShieldAlert, Upload, Users } from 'lucide-react';
 import './styles.css';
 
 const nowIso = () => new Date().toISOString();
+const SAMPLE_DATA_URL = '/sample-data/basys-upcoding-sample.json';
+const UPLOADED_DATA_KEY = 'fwaReports.uploadedData';
+const UPLOADED_NAME_KEY = 'fwaReports.uploadedName';
 
-const seedReport = {
-  run_id: 'demo-001',
-  status: 'completed',
-  schema_version: 'fwa-investigation-reports-2.0',
-  generated_at: '2026-06-12T12:59:55Z',
-  model_trace: 'report_writer model us.anthropic.claude-sonnet-4-6 prompt report_writer-1.0.1 (ok)',
+const fallbackReportBundle = {
+  run_id: 'not-provided',
+  status: 'pending',
+  schema_version: 'unknown',
+  generated_at: null,
+  model_trace: null,
   reports: {
     duplicate_billing: {
       label: 'Duplicate Billing',
-      finding_id: 'F-DUP-000001',
+      finding_id: 'F-DUP-NOT-PROVIDED',
       scenario: 'duplicate_billing',
-      confidence_level: 'High',
-      confidence_score: 0.91,
-      subtitle: 'Potential duplicate professional claim lines with matching procedure, date, provider relationship, and no distinguishing modifier.',
-      executive_summary:
-        'The duplicate billing review identified paid claim lines where a second line appears to duplicate a prior paid service. The flagged lines share the same procedure, service date, provider relationship, and absence of a distinguishing modifier, adjustment, or resubmission code. The redundant paid amount is treated as recoverable exposure pending validation against source adjudication history.',
-      dollar_value: 506.70,
+      confidence_level: 'Not stated',
+      confidence_score: null,
+      subtitle: 'Upload a report JSON with duplicate billing findings to populate this tab.',
+      executive_summary: 'No duplicate billing findings are available in the currently loaded JSON.',
+      dollar_value: 0,
       currency: 'USD',
-      flagged_claims: [
-        {
-          claim_id: 'C0000462910', line: '1', claim_date: '2024-03-12', service_provider: 'P0000731', amount_paid: 168.90, procedure: '99215', comparator_claim_id: 'C0000451027', comparator_line: '1', modifier: 'none',
-          observation: 'Claim C0000462910 line 1: This line, also billed by provider P0000731, was paid 168.90 USD for the same procedure (99215), same date (2024-03-12), and same absence of modifier as claim C0000451027 line 1. No adjustment or resubmission code distinguishes this line from the first. This line carries the redundant paid amount of 168.90 USD identified for recovery.'
-        },
-        {
-          claim_id: 'C0000462911', line: '2', claim_date: '2024-03-12', service_provider: 'P0000731', amount_paid: 169.15, procedure: '99214', comparator_claim_id: 'C0000451028', comparator_line: '1', modifier: 'none',
-          observation: 'Claim C0000462911 line 2: This paid line matches claim C0000451028 line 1 on service provider P0000731, procedure 99214, service date 2024-03-12, and absence of a claim-line modifier. The available claim fields do not show an adjustment, void, replacement, or corrected-claim indicator that would separate the second billing from the original. The paid amount of 169.15 USD is treated as duplicate exposure pending recovery validation.'
-        },
-        {
-          claim_id: 'C0000462912', line: '1', claim_date: '2024-03-13', service_provider: 'P0000731', amount_paid: 168.65, procedure: '99215', comparator_claim_id: 'C0000451029', comparator_line: '1', modifier: 'none',
-          observation: 'Claim C0000462912 line 1: This line duplicates the payment pattern observed on claim C0000451029 line 1, with the same service provider P0000731, same procedure 99215, same service date 2024-03-13, and no modifier or adjustment code that would justify separate payment. The redundant paid amount identified for recovery is 168.65 USD.'
-        }
-      ],
+      flagged_claims: [],
       recommended_actions: [
-        'Validate each duplicate pairing against the adjudication trail, including voids, reversals, replacement claims, and late adjustments.',
-        'Confirm that no modifier, authorization, distinct-service indicator, or corrected-claim relationship supports separate reimbursement.',
-        'Open provider outreach where payer policy requires notice before recovery.',
-        'Recover confirmed duplicate paid amounts by recoupment, offset, or corrected-claim reversal.',
-        'Add the provider and procedure pattern to post-payment monitoring for repeat duplicate submissions.'
+        'Upload source JSON that includes duplicate billing report findings.',
+        'Confirm schema mapping before finalizing any recovery recommendation.'
       ]
     },
     upcoding: {
       label: 'Upcoding',
-      finding_id: 'F-UP-000001',
+      finding_id: 'F-UP-NOT-PROVIDED',
       scenario: 'em_upcoding',
-      confidence_level: 'Medium',
-      confidence_score: 0.74,
-      subtitle: 'Potentially unsupported high-level E&M coding based on coded-claim plausibility review.',
-      executive_summary:
-        'The upcoding review identified high-level E&M claim lines where the billed code appears elevated relative to diagnosis support available in coded claim data. These lines require documentation review because coded diagnoses alone do not confirm medical decision-making, time, or visit complexity. Dollar exposure is the paid amount associated with lines requiring validation before recovery or corrective action.',
-      dollar_value: 642.84,
+      confidence_level: 'Not stated',
+      confidence_score: null,
+      subtitle: 'Upload a report JSON with upcoding findings to populate this tab.',
+      executive_summary: 'No upcoding findings are available in the currently loaded JSON.',
+      dollar_value: 0,
       currency: 'USD',
-      flagged_claims: [
-        {
-          claim_id: 'C0000528144', line: '1', claim_date: '2024-04-18', service_provider: 'P0000912', amount_paid: 186.14, procedure: '99215', lower_supported_code: '99213',
-          observation: 'Claim C0000528144 line 1: This line was paid 186.14 USD for procedure 99215 by provider P0000912 on 2024-04-18. The coded diagnosis profile appears thin for the highest established-patient E&M level and does not, by itself, evidence the complexity usually associated with 99215. Documentation review should determine whether time, medical decision-making, or risk supports the billed level. If not supported, the difference between the paid level and supported level should be recovered according to policy.'
-        },
-        {
-          claim_id: 'C0000528150', line: '1', claim_date: '2024-04-20', service_provider: 'P0000912', amount_paid: 192.49, procedure: '99205', lower_supported_code: '99202',
-          observation: 'Claim C0000528150 line 1: This new-patient E&M line was billed as 99205 and paid 192.49 USD. The available coded-claim information suggests limited diagnosis complexity and does not distinguish this visit as requiring the highest new-patient code. Because clinical notes were not available in the automated review, the line should be audited for medical decision-making, total time, and documentation support before determining overpayment recovery.'
-        },
-        {
-          claim_id: 'C0000528163', line: '2', claim_date: '2024-04-23', service_provider: 'P0000912', amount_paid: 264.21, procedure: '99215', lower_supported_code: '99214',
-          observation: 'Claim C0000528163 line 2: This line was paid 264.21 USD for procedure 99215 on 2024-04-23. The billed level is flagged because the claim-level diagnosis information does not clearly support the highest established-patient level. The line should be reviewed for documented complexity, risk, and time. If the record supports only 99214 or below, the excess paid amount should be calculated and recovered.'
-        }
-      ],
+      flagged_claims: [],
       recommended_actions: [
-        'Request clinical documentation for the flagged E&M lines before making a final fraud, waste, or abuse determination.',
-        'Apply applicable E&M coding guidelines to determine the supported level for each visit.',
-        'Calculate recoverable overpayment as the difference between the billed paid level and the supported level.',
-        'Issue provider education when documentation gaps appear non-systemic; escalate to focused audit when gaps repeat.',
-        'Track future level 4 and 5 billing rates against provider specialty peers and prior audit outcomes.'
+        'Upload source JSON that includes upcoding report findings.',
+        'Validate coded-claim evidence against clinical documentation before recovery.'
       ]
     }
   }
@@ -150,11 +119,11 @@ function normalizeBasysFinding(finding) {
     confidence_level: finding.score?.band || 'Not stated',
     confidence_score: finding.score?.value,
     subtitle: 'Provider-pattern E&M upcoding signal converted from BASYS/FWA finding schema.',
-    executive_summary: finding.reasoning_chain?.judge || finding.reasoning_chain?.critique || seedReport.reports.upcoding.executive_summary,
+    executive_summary: finding.reasoning_chain?.judge || finding.reasoning_chain?.critique || fallbackReportBundle.reports.upcoding.executive_summary,
     dollar_value: Number(finding.exposure?.flagged_paid_amt || 0),
     currency: finding.exposure?.currency || 'USD',
-    flagged_claims: flagged.length ? flagged : seedReport.reports.upcoding.flagged_claims,
-    recommended_actions: seedReport.reports.upcoding.recommended_actions,
+    flagged_claims: flagged.length ? flagged : fallbackReportBundle.reports.upcoding.flagged_claims,
+    recommended_actions: fallbackReportBundle.reports.upcoding.recommended_actions,
     source_finding: finding
   };
 }
@@ -162,7 +131,10 @@ function normalizeBasysFinding(finding) {
 function normalizeInput(input) {
   if (input?.reports?.duplicate_billing && input?.reports?.upcoding) {
     return {
-      reports: input.reports,
+      reports: {
+        duplicate_billing: input.reports.duplicate_billing || fallbackReportBundle.reports.duplicate_billing,
+        upcoding: input.reports.upcoding || fallbackReportBundle.reports.upcoding
+      },
       meta: {
         runId: input.run_id,
         status: input.status,
@@ -176,17 +148,17 @@ function normalizeInput(input) {
   const findings = Array.isArray(input?.findings) ? input.findings : [];
   const upcodingFindings = findings.filter(f => String(f.scenario || '').toLowerCase().includes('upcoding'));
   const primary = upcodingFindings[0] || findings[0];
-  const duplicate = seedReport.reports.duplicate_billing;
-  const upcoding = primary ? normalizeBasysFinding(primary) : seedReport.reports.upcoding;
+  const duplicate = fallbackReportBundle.reports.duplicate_billing;
+  const upcoding = primary ? normalizeBasysFinding(primary) : fallbackReportBundle.reports.upcoding;
 
   return {
     reports: { duplicate_billing: duplicate, upcoding },
     meta: {
-      runId: input?.run_id || seedReport.run_id,
-      status: input?.status || seedReport.status,
-      schemaVersion: input?.schema_version || seedReport.schema_version,
-      sourceGeneratedAt: input?.generated_at || input?.generatedAt || seedReport.generated_at,
-      modelTrace: input?.model_trace || input?.reasoning_model_steps || seedReport.model_trace,
+      runId: input?.run_id || fallbackReportBundle.run_id,
+      status: input?.status || fallbackReportBundle.status,
+      schemaVersion: input?.schema_version || fallbackReportBundle.schema_version,
+      sourceGeneratedAt: input?.generated_at || input?.generatedAt || fallbackReportBundle.generated_at,
+      modelTrace: input?.model_trace || input?.reasoning_model_steps || fallbackReportBundle.model_trace,
       findingCount: findings.length
     }
   };
@@ -203,12 +175,13 @@ function buildFooter(report, meta, activeKey) {
   ];
 }
 
-function TopBar({ onLoad, loadedName }) {
+function TopBar({ onLoad, onReset, loadedName }) {
   return (
     <header className="topbar">
       <div className="brand"><ShieldAlert /><div><strong>FWAReports</strong><span>Investigator portal for duplicate billing and upcoding recovery reports</span></div></div>
       <div className="topActions">
         <label className="upload"><Upload size={17}/> Upload JSON<input type="file" accept="application/json" onChange={onLoad}/></label>
+        <button className="secondary" onClick={onReset}><RotateCcw size={17}/> Reset to Default</button>
         {loadedName && <span className="loaded">Loaded: {loadedName}</span>}
       </div>
     </header>
@@ -326,31 +299,96 @@ function ReportTab({ report, meta, activeKey }) {
 
 function App() {
   const [active, setActive] = useState('duplicate_billing');
-  const [rawData, setRawData] = useState(seedReport);
-  const [loadedName, setLoadedName] = useState('demo seed data');
-  const normalized = useMemo(() => normalizeInput(rawData), [rawData]);
-  const report = normalized.reports[active] || normalized.reports.duplicate_billing;
+  const [rawData, setRawData] = useState(null);
+  const [loadedName, setLoadedName] = useState('Loading sample JSON...');
+  const [loadError, setLoadError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const normalized = useMemo(() => (rawData ? normalizeInput(rawData) : null), [rawData]);
+  const report = normalized?.reports?.[active] || normalized?.reports?.duplicate_billing;
+
+  const loadPersistedUpload = () => {
+    try {
+      const raw = localStorage.getItem(UPLOADED_DATA_KEY);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      const name = localStorage.getItem(UPLOADED_NAME_KEY) || 'uploaded-report.json';
+      setRawData(parsed);
+      setLoadedName(name);
+      setLoadError('');
+      setActive('duplicate_billing');
+      setRefreshKey(v => v + 1);
+      return true;
+    } catch (error) {
+      localStorage.removeItem(UPLOADED_DATA_KEY);
+      localStorage.removeItem(UPLOADED_NAME_KEY);
+      return false;
+    }
+  };
+
+  const loadDefaultFile = async () => {
+    try {
+      const response = await fetch(SAMPLE_DATA_URL);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} while loading ${SAMPLE_DATA_URL}`);
+      }
+      const parsed = await response.json();
+      setRawData(parsed);
+      setLoadedName('basys-upcoding-sample.json');
+      setLoadError('');
+      setActive('duplicate_billing');
+      setRefreshKey(v => v + 1);
+      return true;
+    } catch (error) {
+      setLoadError(`Could not load default JSON file: ${error.message}`);
+      setLoadedName('No file loaded');
+      setRawData(fallbackReportBundle);
+      setActive('duplicate_billing');
+      setRefreshKey(v => v + 1);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const loadedUpload = loadPersistedUpload();
+    if (!loadedUpload) {
+      loadDefaultFile();
+    }
+  }, []);
 
   const onLoad = async event => {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
       const parsed = JSON.parse(await file.text());
-      setRawData(parsed);
-      setLoadedName(file.name);
+      localStorage.setItem(UPLOADED_DATA_KEY, JSON.stringify(parsed));
+      localStorage.setItem(UPLOADED_NAME_KEY, file.name);
+      event.target.value = '';
+      window.location.reload();
     } catch (error) {
       alert(`Could not parse JSON: ${error.message}`);
     }
   };
 
+  const onReset = () => {
+    localStorage.removeItem(UPLOADED_DATA_KEY);
+    localStorage.removeItem(UPLOADED_NAME_KEY);
+    window.location.reload();
+  };
+
   return (
     <div className="app">
-      <TopBar onLoad={onLoad} loadedName={loadedName} />
-      <nav className="tabs">
-        <TabButton id="duplicate_billing" active={active === 'duplicate_billing'} onClick={setActive}>Duplicate Billing</TabButton>
-        <TabButton id="upcoding" active={active === 'upcoding'} onClick={setActive}>Upcoding</TabButton>
-      </nav>
-      <ReportTab report={report} meta={{ ...normalized.meta }} activeKey={active} />
+      <TopBar onLoad={onLoad} onReset={onReset} loadedName={loadedName} />
+      {loadError && <div className="status"><AlertTriangle size={16}/> {loadError}</div>}
+      {!normalized && <div className="status"><FileJson size={16}/> Loading report JSON...</div>}
+      {normalized && (
+        <>
+          <nav className="tabs">
+            <TabButton id="duplicate_billing" active={active === 'duplicate_billing'} onClick={setActive}>Duplicate Billing</TabButton>
+            <TabButton id="upcoding" active={active === 'upcoding'} onClick={setActive}>Upcoding</TabButton>
+          </nav>
+          <ReportTab key={refreshKey} report={report} meta={{ ...normalized.meta }} activeKey={active} />
+        </>
+      )}
       <div className="status"><CheckCircle2 size={16}/> GitHub Actions deployment ready</div>
     </div>
   );
